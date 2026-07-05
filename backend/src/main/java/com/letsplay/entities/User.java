@@ -10,8 +10,8 @@ public class User {
     @Id
     private String id;       // MongoDB _id
 
-    private String name;
+    private String username;
     private String email;
     private String password;
-    private String role;     // e.g., "user" or "admin"
+    private Role role;     // e.g., "user" or "admin"
 }

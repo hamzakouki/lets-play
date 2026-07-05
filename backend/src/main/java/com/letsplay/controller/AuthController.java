@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import jakarta.validation.Valid;
 import com.letsplay.dto.ApiResponse;
 import com.letsplay.dto.RegisterRequest;
-
-import jakarta.validation.constraints.Positive;
+import com.letsplay.dto.LoginRequest;
+import com.letsplay.dto.LoginResponse;
 
 @RestController
 @RequestMapping("/auth")
@@ -29,5 +29,12 @@ public class AuthController {
         authService.register(dto);
         
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>("success", null, "User registered successfully"));
+    }
+
+
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<LoginResponse>> loginUser(@RequestBody @Valid LoginRequest dto) {
+        LoginResponse loginresponse authService.login(dto);
+        return ResponseEntity.ok(new ApiResponse<>("success", loginresponse, "User logged in successfully"));
     }
 }
