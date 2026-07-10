@@ -8,7 +8,6 @@ import com.letsplay.entities.User;
 import com.letsplay.exception.DuplicateResourceException;
 import com.letsplay.exception.EmailAlreadyExistsException;
 import com.letsplay.exception.InvalidCredentialsException;
-import com.letsplay.exception.UserNotFoundException;
 import com.letsplay.repository.UserRepository;
 import com.letsplay.security.JwtService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,9 +19,9 @@ public class AuthService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    public AuthService(UserRepository userRepository, JwtService jwtService) {
+    public AuthService(UserRepository userRepository, JwtService jwtService, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.passwordEncoder = new BCryptPasswordEncoder();
+        this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
     }
 
@@ -62,11 +61,11 @@ public class AuthService {
     public LoginResponse login(LoginRequest dto) {
         // Find user by username
         User user = userRepository.findByUsername(dto.getUsername())
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid username or password"));
 
         // Verify password
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-            throw new InvalidCredentialsException("Invalid password");
+            throw new InvalidCredentialsException("Invalid username or password");
         }
 
         // Generate JWT token
