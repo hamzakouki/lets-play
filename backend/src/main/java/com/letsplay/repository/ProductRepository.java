@@ -13,4 +13,5 @@ public interface ProductRepository extends MongoRepository<Product, String> {
 
     // If you want to support searching by name (case-insensitive)
     List<Product> findByNameContainingIgnoreCase(String name);
+    void deleteByUserId(String userId);
 }

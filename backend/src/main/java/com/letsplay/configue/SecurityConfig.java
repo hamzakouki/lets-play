@@ -13,8 +13,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 @Configuration
+@EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
@@ -22,7 +24,8 @@ public class SecurityConfig {
         private final JwtAuthenticationEntryPoint authenticationEntryPoint;
         private final JwtAccessDeniedHandler accessDeniedHandler;
 
-        public SecurityConfig(JwtAuthenticationFilter jwtFilter, JwtAuthenticationEntryPoint authenticationEntryPoint, JwtAccessDeniedHandler accessDeniedHandler) {
+        public SecurityConfig(JwtAuthenticationFilter jwtFilter, JwtAuthenticationEntryPoint authenticationEntryPoint,
+                        JwtAccessDeniedHandler accessDeniedHandler) {
 
                 this.jwtFilter = jwtFilter;
                 this.authenticationEntryPoint = authenticationEntryPoint;
@@ -70,8 +73,7 @@ public class SecurityConfig {
 
                                                 .anyRequest().authenticated())
 
-                                .addFilterBefore( jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
                 return http.build();
         }
-
 }
