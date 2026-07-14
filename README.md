@@ -110,9 +110,9 @@ Password must be hashed using BCrypt.
 
 ## Login
 
-Authenticate using:
+Authenticate using either:
 
-- email
+- email or username
 - password
 
 Return

@@ -3,6 +3,7 @@ package com.letsplay.configue;
 import com.letsplay.security.JwtAccessDeniedHandler;
 import com.letsplay.security.JwtAuthenticationEntryPoint;
 import com.letsplay.security.JwtAuthenticationFilter;
+import com.letsplay.security.RateLimitingFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,13 +24,15 @@ public class SecurityConfig {
         private final JwtAuthenticationFilter jwtFilter;
         private final JwtAuthenticationEntryPoint authenticationEntryPoint;
         private final JwtAccessDeniedHandler accessDeniedHandler;
+        private final RateLimitingFilter rateLimitingFilter;
 
         public SecurityConfig(JwtAuthenticationFilter jwtFilter, JwtAuthenticationEntryPoint authenticationEntryPoint,
-                        JwtAccessDeniedHandler accessDeniedHandler) {
+                        JwtAccessDeniedHandler accessDeniedHandler, RateLimitingFilter rateLimitingFilter) {
 
                 this.jwtFilter = jwtFilter;
                 this.authenticationEntryPoint = authenticationEntryPoint;
                 this.accessDeniedHandler = accessDeniedHandler;
+                this.rateLimitingFilter = rateLimitingFilter;
         }
 
         @Bean
@@ -56,6 +59,7 @@ public class SecurityConfig {
                                 .authorizeHttpRequests(auth -> auth
 
                                                 .requestMatchers("/auth/**").permitAll()
+                                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                                                 .requestMatchers(HttpMethod.GET, "/products/**").permitAll()
 
@@ -73,6 +77,7 @@ public class SecurityConfig {
 
                                                 .anyRequest().authenticated())
 
+                                .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
                                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
                 return http.build();
         }
